@@ -6,6 +6,8 @@ Inspired by [Grackle Slides](https://www.grackledocs.com/) — runs entirely on 
 
 ![Python](https://img.shields.io/badge/python-3.10%2B-blue) ![Flask](https://img.shields.io/badge/flask-3.x-lightgrey) ![License](https://img.shields.io/badge/license-MIT-green)
 
+![Screenshot of Slide A11y Remediator showing a 20-slide deck with the issues panel open](static/screenshot.png)
+
 ---
 
 ## Features
