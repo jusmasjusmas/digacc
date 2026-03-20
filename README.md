@@ -51,10 +51,20 @@ Without a key the app still runs — AI-generated alt text and slide titles are 
 ### 4. Run
 
 ```bash
-python app.py
+digacc                          # default: http://localhost:5001
+digacc --open                   # start and open browser automatically
+digacc --port 8080              # custom port
+digacc --host 0.0.0.0           # expose on your LAN
+digacc --api-key sk-ant-...     # set Anthropic key without exporting env var
+digacc --no-debug               # disable Flask reloader
+digacc --help                   # full usage
 ```
 
-Open **http://localhost:5001** in your browser.
+> **First-time setup:** add the shell function to your `~/.zshrc`:
+> ```bash
+> digacc() { python /path/to/digaccapp/app.py "$@"; }
+> ```
+> Or just run `python app.py [options]` directly from the project folder.
 
 ---
 
