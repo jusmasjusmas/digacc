@@ -1,6 +1,24 @@
 # Slide A11y Remediator
 
-Interactive web app for remediating PowerPoint accessibility issues. Checks for WCAG 2.1 AA compliance and Grackle Slides compatibility, with live slide previews and a human-in-the-loop approval workflow.
+A local web app for remediating PowerPoint accessibility issues. Upload a `.pptx`, get WCAG 2.1 AA / Title II violations flagged and auto-fixed, review the rest slide-by-slide with live thumbnails, then download the remediated file.
+
+Inspired by [Grackle Slides](https://www.grackledocs.com/) — runs entirely on your machine.
+
+![Python](https://img.shields.io/badge/python-3.10%2B-blue) ![Flask](https://img.shields.io/badge/flask-3.x-lightgrey) ![License](https://img.shields.io/badge/license-MIT-green)
+
+---
+
+## Features
+
+- **14 accessibility checks** covering structure, images, tables, content, and visual contrast
+- **Auto-fix engine** — silently repairs language tags, trailing empty paragraphs, empty text boxes, merged table cells, and more
+- **AI-powered** — uses Claude to generate alt text for images and titles for untitled slides (requires Anthropic API key)
+- **Live slide thumbnails** via LibreOffice — previews update after every fix
+- **Human-in-the-loop** — Accept / Edit / Skip each pending issue; bulk "Accept All" for quick review
+- **Keyboard navigation** — `←` / `→` to move between slides
+- **Dark theme** React UI, no build step required
+
+---
 
 ## Setup
 
@@ -28,7 +46,7 @@ pip install -r requirements.txt
 export ANTHROPIC_API_KEY=sk-ant-your-key-here
 ```
 
-Without a key the app still runs — AI-generated alt text and slide titles are skipped, and those issues are flagged for manual review instead.
+Without a key the app still runs — AI-generated alt text and slide titles are skipped and flagged for manual review instead. All other checks are unaffected.
 
 ### 4. Run
 
@@ -36,47 +54,53 @@ Without a key the app still runs — AI-generated alt text and slide titles are 
 python app.py
 ```
 
-Then open **http://localhost:5000** in your browser.
+Open **http://localhost:5001** in your browser.
 
 ---
 
-## How it works
+## Workflow
 
-1. **Drop a .pptx** onto the upload zone
-2. The backend scans for all accessibility issues and immediately auto-applies the ones configured to run silently
-3. You're shown a **three-panel workspace**: slide strip → live preview → issues panel
-4. **Pending issues** each have an Accept / Edit / Skip decision:
-   - **Accept** — applies the suggested fix as-is
-   - **Edit** — lets you change the suggested value before applying
-   - **Skip** — marks it as skipped (you'll handle it in PowerPoint)
-5. The slide preview **updates live** after each fix
-6. **Download** the remediated .pptx when you're done
+1. **Drop a `.pptx`** onto the upload zone (or click to browse)
+2. The backend scans for all issues and silently auto-applies the "always auto" fixes
+3. You land in a **three-panel workspace**:
+   - **Left** — slide strip with issue-count badges
+   - **Center** — full-size slide preview (updates live after each fix)
+   - **Right** — issues panel with Pending / Auto-fixed / Done tabs
+4. For each pending issue, choose:
+   - **Accept** — apply the suggested fix as-is
+   - **Edit** — modify the suggested value, then confirm
+   - **Skip** — leave it for manual follow-up in PowerPoint
+5. Use **Accept All** to batch-accept all auto-fixable issues at once
+6. **Download** the remediated `.pptx` when done
 
 ---
 
-## Checks performed
+## Checks
 
-| Check | Default |
-|---|---|
-| Presentation metadata title | Always auto |
-| Language tags on all text runs | Always auto |
-| Trailing empty paragraphs | Always auto |
-| Empty text boxes | Always auto |
-| Unmerge merged table cells | Always auto |
-| Fill empty table cells with — | Always auto |
-| Missing / empty slide titles (AI) | Auto (toggleable) |
-| Duplicate slide titles | Auto (toggleable) |
-| Broken list formatting | Auto (toggleable) |
-| Image alt text (AI-generated) | Auto (toggleable) |
-| Table descriptions | Auto (toggleable) |
-| Explicit low-contrast text colors | Auto (toggleable) |
-| Fine print text (< 18pt) | Manual only |
-| Theme-inherited color contrast | Manual only |
+| Check | Category | Default |
+|---|---|---|
+| Presentation metadata title | Structure | Always auto |
+| Language tags on all text runs | Structure | Always auto |
+| Trailing empty paragraphs | Structure | Always auto |
+| Empty text boxes | Structure | Always auto |
+| Unmerge merged table cells | Tables | Always auto |
+| Fill empty table cells with — | Tables | Always auto |
+| Missing / empty slide titles (AI) | Structure | Auto (toggleable) |
+| Duplicate slide titles | Structure | Auto (toggleable) |
+| Broken list formatting | Content | Auto (toggleable) |
+| Image alt text (AI-generated) | Images | Auto (toggleable) |
+| Table descriptions (alt text) | Tables | Auto (toggleable) |
+| Explicit low-contrast text colors | Visual | Auto (toggleable) |
+| Fine print text (< 18pt) | Visual | Manual review only |
+| Theme-inherited color contrast | Visual | Manual review only |
+
+Toggleable checks can be switched off per-session in the Settings panel before upload or during review.
 
 ---
 
 ## Notes
 
-- Sessions are stored in memory — restarting the server clears them
-- The original file is never modified; all changes go to a working copy
-- For large decks (50+ slides), thumbnail generation may take 15–30 seconds
+- Sessions are in-memory — restarting the server clears them
+- The original file is never modified; all edits go to a working copy
+- Thumbnail generation runs LibreOffice headlessly — expect ~1 min for a 60-slide deck
+- Tested on macOS with LibreOffice 26.x and Python 3.11
