@@ -4,43 +4,42 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Slide A11y Remediator</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
   <style>
     :root {
-      --bg:        #0d0d14;
-      --surface:   #13131f;
-      --card:      #1a1a2b;
-      --card-2:    #20203a;
-      --border:    #2a2a42;
-      --border-2:  #35355a;
-      --text:      #e2e2f0;
-      --muted:     #7070a0;
-      --accent:    #7c6af5;
-      --accent-bg: rgba(124,106,245,0.12);
-      --error:     #f26b6b;
-      --error-bg:  rgba(242,107,107,0.1);
-      --warn:      #f0b429;
-      --warn-bg:   rgba(240,180,41,0.1);
-      --ok:        #34d399;
-      --ok-bg:     rgba(52,211,153,0.1);
-      --info:      #60a5fa;
+      --bg:        #0a0a0a;
+      --surface:   #111111;
+      --card:      #1a1a1a;
+      --card-2:    #222222;
+      --border:    rgba(255,255,255,0.08);
+      --border-2:  rgba(255,255,255,0.14);
+      --text:      #f0f0f0;
+      --muted:     #666666;
+      --accent:    #e8e8e8;
+      --accent-bg: rgba(255,255,255,0.06);
+      --error:     #e05252;
+      --error-bg:  rgba(224,82,82,0.1);
+      --warn:      #c8902a;
+      --warn-bg:   rgba(200,144,42,0.1);
+      --ok:        #3a9e6e;
+      --ok-bg:     rgba(58,158,110,0.1);
+      --info:      #888888;
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html, body, #root { height: 100%; }
     body {
-      font-family: 'DM Sans', sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Segoe UI", sans-serif;
       background: var(--bg);
       color: var(--text);
-      font-size: 14px;
+      font-size: 13px;
       line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
     }
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
     ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: var(--border-2); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 3px; }
 
     /* ── LAYOUT ─────────────────────────────────────────────────── */
     .app { display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
@@ -53,35 +52,34 @@
       z-index: 10;
     }
     .topbar-logo {
-      font-family: 'Syne', sans-serif;
-      font-weight: 700; font-size: 15px;
-      color: var(--accent); letter-spacing: -0.02em;
+      font-weight: 600; font-size: 13px;
+      color: var(--text); letter-spacing: -0.01em;
       white-space: nowrap;
     }
-    .topbar-sep { width: 1px; height: 20px; background: var(--border); }
+    .topbar-sep { width: 1px; height: 16px; background: var(--border-2); }
     .topbar-filename {
-      font-size: 13px; color: var(--muted);
-      font-family: 'DM Mono', monospace;
+      font-size: 12px; color: var(--muted);
+      font-family: ui-monospace, "SF Mono", monospace;
       overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
       max-width: 240px;
     }
     .topbar-progress {
       display: flex; align-items: center; gap: 8px;
-      margin-left: auto; font-size: 12px; color: var(--muted);
+      margin-left: auto; font-size: 11px; color: var(--muted);
     }
-    .progress-bar-wrap { width: 120px; height: 4px; background: var(--border); border-radius: 2px; }
-    .progress-bar-fill { height: 100%; border-radius: 2px; background: var(--accent); transition: width .3s; }
+    .progress-bar-wrap { width: 80px; height: 2px; background: var(--border-2); border-radius: 2px; }
+    .progress-bar-fill { height: 100%; border-radius: 2px; background: var(--muted); transition: width .3s; }
     .topbar-btn {
-      padding: 6px 14px; border-radius: 6px; border: 1px solid var(--border);
-      background: var(--card); color: var(--text); font-size: 12px; font-family: inherit;
-      cursor: pointer; transition: border-color .15s, background .15s;
+      padding: 5px 12px; border-radius: 5px; border: 1px solid var(--border-2);
+      background: transparent; color: var(--muted); font-size: 12px; font-family: inherit;
+      cursor: pointer; transition: color .12s, border-color .12s, background .12s;
       white-space: nowrap;
     }
-    .topbar-btn:hover { border-color: var(--border-2); background: var(--card-2); }
+    .topbar-btn:hover { color: var(--text); border-color: rgba(255,255,255,0.22); background: var(--card); }
     .topbar-btn.primary {
-      background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 500;
+      background: var(--text); border-color: var(--text); color: #000; font-weight: 500;
     }
-    .topbar-btn.primary:hover { opacity: .9; }
+    .topbar-btn.primary:hover { opacity: .85; }
 
     .workspace { display: flex; flex: 1; overflow: hidden; }
 
@@ -100,19 +98,19 @@
       overflow: hidden; background: var(--card);
       transition: border-color .15s;
     }
-    .slide-thumb.active   { border-color: var(--accent); }
+    .slide-thumb.active   { border-color: rgba(255,255,255,0.5); }
     .slide-thumb:hover:not(.active) { border-color: var(--border-2); }
     .slide-thumb img { width: 100%; display: block; }
     .slide-thumb-num {
       position: absolute; bottom: 4px; left: 4px;
-      font-size: 10px; font-family: 'DM Mono', monospace; color: var(--muted);
-      background: rgba(13,13,20,.7); padding: 1px 4px; border-radius: 3px;
+      font-size: 10px; font-family: ui-monospace, "SF Mono", monospace; color: var(--muted);
+      background: rgba(0,0,0,.6); padding: 1px 4px; border-radius: 3px;
     }
     .slide-thumb-badge {
       position: absolute; top: 4px; right: 4px;
       background: var(--error); color: #fff;
-      font-size: 10px; font-weight: 600; font-family: 'DM Mono', monospace;
-      min-width: 18px; height: 18px; border-radius: 9px;
+      font-size: 10px; font-weight: 600;
+      min-width: 16px; height: 16px; border-radius: 8px;
       display: flex; align-items: center; justify-content: center; padding: 0 4px;
     }
     .slide-thumb-placeholder {
@@ -130,21 +128,21 @@
     }
     .slide-preview img {
       max-width: 100%; max-height: 100%;
-      object-fit: contain; border-radius: 8px;
-      box-shadow: 0 8px 40px rgba(0,0,0,.6);
+      object-fit: contain; border-radius: 4px;
+      box-shadow: 0 4px 32px rgba(0,0,0,.7);
     }
     .slide-preview-label {
-      margin-top: 12px; font-size: 12px; color: var(--muted);
-      font-family: 'DM Mono', monospace;
+      margin-top: 10px; font-size: 11px; color: var(--muted);
+      font-family: ui-monospace, "SF Mono", monospace;
     }
     .preview-loading {
       display: flex; flex-direction: column; align-items: center; gap: 12px;
-      color: var(--muted); font-size: 13px;
+      color: var(--muted); font-size: 12px;
     }
     .spinner {
-      width: 28px; height: 28px;
-      border: 2px solid var(--border);
-      border-top-color: var(--accent);
+      width: 20px; height: 20px;
+      border: 1.5px solid var(--border-2);
+      border-top-color: var(--muted);
       border-radius: 50%;
       animation: spin .7s linear infinite;
     }
@@ -168,7 +166,7 @@
       transition: color .15s; letter-spacing: .03em; text-transform: uppercase;
       margin-bottom: -1px;
     }
-    .issues-tab.active { color: var(--text); border-bottom-color: var(--accent); }
+    .issues-tab.active { color: var(--text); border-bottom-color: rgba(255,255,255,0.5); }
     .issues-list {
       flex: 1; overflow-y: auto; padding: 12px;
       display: flex; flex-direction: column; gap: 8px;
@@ -200,8 +198,8 @@
       line-height: 1.35; flex: 1;
     }
     .issue-badge {
-      font-size: 9px; font-weight: 600; font-family: 'DM Mono', monospace;
-      padding: 2px 6px; border-radius: 3px; letter-spacing: .05em;
+      font-size: 9px; font-weight: 500; font-family: ui-monospace, "SF Mono", monospace;
+      padding: 2px 6px; border-radius: 3px; letter-spacing: .04em;
       text-transform: uppercase; white-space: nowrap; margin-top: 1px;
     }
     .badge-error   { background: var(--error-bg); color: var(--error); }
@@ -218,18 +216,19 @@
       letter-spacing: .04em; text-transform: uppercase;
     }
     .issue-value-display {
-      font-family: 'DM Mono', monospace; font-size: 11.5px;
+      font-family: ui-monospace, "SF Mono", monospace; font-size: 11px;
       background: var(--card-2); border: 1px solid var(--border);
-      border-radius: 5px; padding: 6px 8px; color: var(--text);
+      border-radius: 4px; padding: 6px 8px; color: var(--text);
       word-break: break-word; line-height: 1.4;
     }
     .issue-value-input {
-      font-family: 'DM Mono', monospace; font-size: 11.5px;
-      background: var(--bg); border: 1px solid var(--accent);
-      border-radius: 5px; padding: 6px 8px; color: var(--text);
+      font-family: ui-monospace, "SF Mono", monospace; font-size: 11px;
+      background: var(--bg); border: 1px solid var(--border-2);
+      border-radius: 4px; padding: 6px 8px; color: var(--text);
       width: 100%; outline: none; resize: vertical; min-height: 36px;
       line-height: 1.4;
     }
+    .issue-value-input:focus { border-color: rgba(255,255,255,0.3); }
     .issue-card-actions {
       display: flex; gap: 6px; padding: 0 12px 10px; flex-wrap: wrap;
     }
@@ -238,30 +237,30 @@
       font-family: inherit; cursor: pointer; border: 1px solid var(--border);
       font-weight: 500; transition: all .12s;
     }
-    .action-btn:disabled { opacity: .4; cursor: not-allowed; }
+    .action-btn:disabled { opacity: .35; cursor: not-allowed; }
     .action-btn.accept {
-      background: var(--ok-bg); color: var(--ok); border-color: rgba(52,211,153,.3);
+      background: transparent; color: var(--ok); border-color: rgba(58,158,110,.35);
     }
-    .action-btn.accept:hover:not(:disabled) { background: rgba(52,211,153,.2); }
+    .action-btn.accept:hover:not(:disabled) { background: var(--ok-bg); }
     .action-btn.edit {
-      background: var(--accent-bg); color: var(--accent); border-color: rgba(124,106,245,.3);
+      background: transparent; color: var(--muted); border-color: var(--border-2);
     }
-    .action-btn.edit:hover:not(:disabled) { background: rgba(124,106,245,.2); }
+    .action-btn.edit:hover:not(:disabled) { color: var(--text); border-color: rgba(255,255,255,.22); }
     .action-btn.skip {
-      background: transparent; color: var(--muted); border-color: var(--border);
+      background: transparent; color: var(--muted); border-color: transparent;
     }
-    .action-btn.skip:hover:not(:disabled) { color: var(--text); border-color: var(--border-2); }
+    .action-btn.skip:hover:not(:disabled) { color: var(--text); }
     .action-btn.confirm {
-      background: var(--accent); color: #fff; border-color: var(--accent);
+      background: var(--text); color: #000; border-color: var(--text); font-weight: 500;
     }
-    .action-btn.confirm:hover:not(:disabled) { opacity: .9; }
+    .action-btn.confirm:hover:not(:disabled) { opacity: .85; }
     .action-btn.cancel {
-      background: transparent; color: var(--muted); border-color: var(--border);
+      background: transparent; color: var(--muted); border-color: transparent;
     }
     .action-btn.human {
-      background: var(--warn-bg); color: var(--warn); border-color: rgba(240,180,41,.3);
+      background: transparent; color: var(--muted); border-color: var(--border-2);
     }
-    .action-btn.human:hover:not(:disabled) { background: rgba(240,180,41,.2); }
+    .action-btn.human:hover:not(:disabled) { color: var(--text); border-color: rgba(255,255,255,.22); }
 
     /* ── UPLOAD ZONE ─────────────────────────────────────────────── */
     .upload-screen {
@@ -277,21 +276,21 @@
       cursor: pointer; transition: border-color .2s, background .2s;
       background: var(--surface); text-align: center;
     }
-    .upload-zone.drag-over { border-color: var(--accent); background: var(--accent-bg); }
+    .upload-zone.drag-over { border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.03); }
     .upload-zone:hover { border-color: var(--border-2); }
-    .upload-icon { font-size: 36px; }
+    .upload-icon { font-size: 28px; }
     .upload-title {
-      font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 600;
-      color: var(--text);
+      font-size: 16px; font-weight: 500;
+      color: var(--text); letter-spacing: -0.01em;
     }
-    .upload-sub { font-size: 13px; color: var(--muted); }
+    .upload-sub { font-size: 12px; color: var(--muted); }
     .upload-btn {
-      margin-top: 4px; padding: 8px 20px; border-radius: 6px;
-      background: var(--accent); color: #fff; border: none;
-      font-family: inherit; font-size: 13px; font-weight: 500;
+      margin-top: 4px; padding: 7px 18px; border-radius: 5px;
+      background: var(--text); color: #000; border: none;
+      font-family: inherit; font-size: 12px; font-weight: 500;
       cursor: pointer; transition: opacity .15s;
     }
-    .upload-btn:hover { opacity: .9; }
+    .upload-btn:hover { opacity: .85; }
 
     /* ── SETTINGS PANEL (below upload zone) ──────────────────────── */
     .settings-inline {
@@ -318,30 +317,30 @@
     }
     .settings-row-label { font-size: 12.5px; color: var(--text); flex: 1; }
     .settings-row-tag {
-      font-size: 9px; font-family: 'DM Mono', monospace;
+      font-size: 9px; font-family: ui-monospace, "SF Mono", monospace;
       padding: 2px 6px; border-radius: 3px;
       letter-spacing: .04em; text-transform: uppercase;
     }
-    .tag-auto   { background: var(--ok-bg);    color: var(--ok); }
-    .tag-human  { background: var(--warn-bg);  color: var(--warn); }
+    .tag-auto   { background: var(--ok-bg);   color: var(--ok); }
+    .tag-human  { background: var(--warn-bg); color: var(--warn); }
     .toggle {
-      position: relative; width: 32px; height: 18px; flex-shrink: 0;
+      position: relative; width: 28px; height: 16px; flex-shrink: 0;
     }
     .toggle input { opacity: 0; width: 0; height: 0; }
     .toggle-slider {
       position: absolute; inset: 0;
-      background: var(--border-2); border-radius: 9px;
+      background: rgba(255,255,255,0.15); border-radius: 8px;
       cursor: pointer; transition: background .2s;
     }
     .toggle-slider::before {
       content: ''; position: absolute;
-      width: 12px; height: 12px; left: 3px; bottom: 3px;
-      border-radius: 50%; background: #fff;
-      transition: transform .2s;
+      width: 10px; height: 10px; left: 3px; bottom: 3px;
+      border-radius: 50%; background: rgba(255,255,255,0.5);
+      transition: transform .2s, background .2s;
     }
-    .toggle input:checked + .toggle-slider { background: var(--accent); }
-    .toggle input:checked + .toggle-slider::before { transform: translateX(14px); }
-    .toggle input:disabled + .toggle-slider { opacity: .4; cursor: default; }
+    .toggle input:checked + .toggle-slider { background: rgba(255,255,255,0.85); }
+    .toggle input:checked + .toggle-slider::before { transform: translateX(12px); background: #000; }
+    .toggle input:disabled + .toggle-slider { opacity: .3; cursor: default; }
 
     /* ── API KEY INPUT ────────────────────────────────────────────── */
     .api-key-wrap {
@@ -355,12 +354,12 @@
       letter-spacing: .06em; text-transform: uppercase;
     }
     .api-key-input {
-      background: var(--bg); border: 1px solid var(--border);
-      border-radius: 6px; padding: 7px 10px;
-      font-family: 'DM Mono', monospace; font-size: 12px; color: var(--text);
+      background: var(--bg); border: 1px solid var(--border-2);
+      border-radius: 5px; padding: 7px 10px;
+      font-family: ui-monospace, "SF Mono", monospace; font-size: 12px; color: var(--text);
       width: 100%; outline: none; transition: border-color .15s;
     }
-    .api-key-input:focus { border-color: var(--accent); }
+    .api-key-input:focus { border-color: rgba(255,255,255,0.3); }
     .api-key-hint { font-size: 11px; color: var(--muted); }
 
     /* ── MODAL ────────────────────────────────────────────────────── */
@@ -379,7 +378,7 @@
       padding: 16px 20px; border-bottom: 1px solid var(--border);
       display: flex; align-items: center; justify-content: space-between;
     }
-    .modal-title { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 600; }
+    .modal-title { font-size: 14px; font-weight: 600; letter-spacing: -0.01em; }
     .modal-close {
       background: none; border: none; color: var(--muted); cursor: pointer;
       font-size: 20px; line-height: 1; padding: 2px;
@@ -395,12 +394,12 @@
       gap: 16px; z-index: 200;
     }
     .loading-title {
-      font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 600;
+      font-size: 14px; font-weight: 500; color: var(--text);
     }
     .loading-sub { font-size: 13px; color: var(--muted); }
 
     .tag-slide {
-      display: inline-block; font-size: 10px; font-family: 'DM Mono', monospace;
+      display: inline-block; font-size: 10px; font-family: ui-monospace, "SF Mono", monospace;
       background: var(--card-2); color: var(--muted); padding: 1px 5px;
       border-radius: 3px; margin-bottom: 2px;
     }
@@ -435,8 +434,8 @@
       from { transform: translateX(40px); opacity: 0; }
       to   { transform: translateX(0);    opacity: 1; }
     }
-    .toast.error   { background: #1e1010; border-color: rgba(242,107,107,.4); color: var(--error); }
-    .toast.success { background: #0d1e16; border-color: rgba(52,211,153,.3);  color: var(--ok); }
+    .toast.error   { background: #1a1010; border-color: rgba(224,82,82,.3);  color: var(--error); }
+    .toast.success { background: #0e1812; border-color: rgba(58,158,110,.3); color: var(--ok); }
     .toast.info    { background: var(--card); border-color: var(--border-2); color: var(--text); }
     .toast-msg { flex: 1; line-height: 1.4; }
     .toast-close {
@@ -453,18 +452,18 @@
     }
     .bulk-bar-label { font-size: 11px; color: var(--muted); }
     .bulk-btn {
-      padding: 3px 10px; border-radius: 5px; font-size: 11px;
-      border: 1px solid rgba(52,211,153,.3); background: var(--ok-bg);
+      padding: 3px 10px; border-radius: 4px; font-size: 11px;
+      border: 1px solid rgba(58,158,110,.3); background: transparent;
       color: var(--ok); cursor: pointer; font-family: inherit; font-weight: 500;
       transition: background .12s;
     }
-    .bulk-btn:hover:not(:disabled) { background: rgba(52,211,153,.2); }
-    .bulk-btn:disabled { opacity: .4; cursor: not-allowed; }
+    .bulk-btn:hover:not(:disabled) { background: var(--ok-bg); }
+    .bulk-btn:disabled { opacity: .35; cursor: not-allowed; }
 
     /* ── SLIDE STRIP HEADER ──────────────────────────────────────── */
     .strip-header {
       padding: 8px 8px 4px;
-      font-size: 10px; font-family: 'DM Mono', monospace; color: var(--muted);
+      font-size: 10px; font-family: ui-monospace, "SF Mono", monospace; color: var(--muted);
       letter-spacing: .04em; text-transform: uppercase; text-align: center;
       border-bottom: 1px solid var(--border); margin-bottom: 4px;
     }
@@ -718,7 +717,7 @@ function UploadScreen({ onUpload }) {
         onDrop={e => { e.preventDefault(); setDrag(false); handleFiles(e.dataTransfer.files); }}
         onClick={() => fileRef.current.click()}
       >
-        <div className="upload-icon">⚡</div>
+        <div className="upload-icon">↑</div>
         <div className="upload-title">Drop a .pptx file to begin</div>
         <div className="upload-sub">Drag & drop or click to browse</div>
         <button className="upload-btn" onClick={e => { e.stopPropagation(); fileRef.current.click(); }}>
@@ -1004,7 +1003,7 @@ function App() {
     return (
       <div className="app">
         <div className="topbar">
-          <div className="topbar-logo">⚡ Slide A11y Remediator</div>
+          <div className="topbar-logo">Slide A11y</div>
         </div>
         {loading ? (
           <div className="loading-overlay">
@@ -1044,8 +1043,8 @@ function App() {
         <div className="topbar-sep" />
         <div className="topbar-filename">{session.filename}</div>
         {session.ai_enabled && (
-          <span style={{fontSize:10,color:"var(--ok)",fontFamily:"'DM Mono',monospace",
-            background:"var(--ok-bg)",padding:"2px 7px",borderRadius:3}}>AI ✓</span>
+          <span style={{fontSize:10,color:"var(--ok)",fontFamily:"ui-monospace,monospace",
+            background:"var(--ok-bg)",padding:"2px 7px",borderRadius:3}}>AI</span>
         )}
         <div className="topbar-progress">
           <span>{resolved}/{totalIssues} issues</span>
