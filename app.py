@@ -1,10 +1,16 @@
 """
 PPTX Accessibility Remediator — Flask Backend
-Run: python app.py
-Then open: http://localhost:5001
+
+Usage:
+  python app.py                        # default: localhost:5001
+  python app.py --port 8080            # custom port
+  python app.py --host 0.0.0.0         # expose to network
+  python app.py --open                 # auto-open browser
+  python app.py --api-key sk-ant-...   # set Anthropic key for this session
+  python app.py --no-debug             # production-style (no reloader)
 """
 
-import os, uuid, json, tempfile
+import os, uuid, json, tempfile, argparse, webbrowser, threading
 from pathlib import Path
 from flask import Flask, request, jsonify, send_file, render_template
 from accessibility_engine import AccessibilitySession, CHECKS
@@ -135,7 +141,41 @@ def download(session_id):
 # ── ENTRY POINT ────────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        prog="app.py",
+        description="PPTX Accessibility Remediator — local web app",
+    )
+    parser.add_argument("--port",    type=int, default=5001,        metavar="PORT",
+                        help="port to listen on (default: 5001)")
+    parser.add_argument("--host",    default="127.0.0.1",           metavar="HOST",
+                        help="host to bind to (default: 127.0.0.1; use 0.0.0.0 to expose on LAN)")
+    parser.add_argument("--open",    action="store_true",
+                        help="open the browser automatically on startup")
+    parser.add_argument("--api-key", metavar="KEY",
+                        help="Anthropic API key (overrides ANTHROPIC_API_KEY env var)")
+    parser.add_argument("--no-debug", action="store_true",
+                        help="disable Flask debug mode / reloader")
+    args = parser.parse_args()
+
+    if args.api_key:
+        os.environ["ANTHROPIC_API_KEY"] = args.api_key
+
+    url = f"http://{'localhost' if args.host == '127.0.0.1' else args.host}:{args.port}"
+
     print("\n  PPTX Accessibility Remediator")
     print("  ─────────────────────────────")
-    print("  Open: http://localhost:5001\n")
-    app.run(debug=True, port=5001)
+    print(f"  Open: {url}")
+    if args.host == "0.0.0.0":
+        import socket
+        lan_ip = socket.gethostbyname(socket.gethostname())
+        print(f"  LAN:  http://{lan_ip}:{args.port}")
+    if os.environ.get("ANTHROPIC_API_KEY"):
+        print("  AI:   enabled (Claude alt text + slide titles)")
+    else:
+        print("  AI:   disabled (no ANTHROPIC_API_KEY set)")
+    print()
+
+    if args.open:
+        threading.Timer(1.0, lambda: webbrowser.open(url)).start()
+
+    app.run(host=args.host, port=args.port, debug=not args.no_debug)
